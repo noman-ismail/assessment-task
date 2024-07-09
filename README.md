@@ -63,7 +63,18 @@
 14. Start the localhost server:
     
         php artisan serve
-15. Default Seeder For SuperAdmin
+15. SuperAdmin Credentials
 
         email : superadmin@example.com
         password : password 
+16. For Email Notifications
+
+        MAIL_MAILER=smtp
+        MAIL_HOST=smtp.mailtrap.io
+        MAIL_PORT=2525
+        MAIL_USERNAME=your_smtp_username
+        MAIL_PASSWORD=your_smtp_password
+        MAIL_ENCRYPTION=tls
+        MAIL_FROM_ADDRESS=your_email@example.com
+        MAIL_FROM_NAME="${APP_NAME}"
+

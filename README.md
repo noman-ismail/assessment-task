@@ -64,5 +64,6 @@
     
         php artisan serve
 15. Default Seeder For SuperAdmin
+
         email : superadmin@example.com
         password : password 

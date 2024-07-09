@@ -1,42 +1,42 @@
 <?php
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\CustomLoginController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-
 Auth::routes();
 
-Route::post('login', [CustomLoginController::class, 'login'])->name('login');
-Route::post('logout', [CustomLoginController::class, 'logout'])->name('logout');
-Route::get('login', [CustomLoginController::class, 'showLoginForm'])->name('login');
+// Custom authentication routes
+Route::prefix('auth')->group(function () {
+    Route::post('login', [CustomLoginController::class, 'login'])->name('login');
+    Route::post('logout', [CustomLoginController::class, 'logout'])->name('logout');
+    Route::get('login', [CustomLoginController::class, 'showLoginForm'])->name('login');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
-Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+    // Google authentication routes
+    Route::prefix('google')->group(function () {
+        Route::get('/', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+        Route::get('callback', [GoogleController::class, 'handleGoogleCallback']);
+    });
+});
 
+// Routes for authenticated users
+Route::middleware('auth')->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+});
 
-Route::middleware(['auth', 'role:super-admin'])->group(function () {
-    Route::get('admin/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
-    Route::post('admin/users/{user}/assign-roles', [App\Http\Controllers\Admin\UserController::class, 'assignRoles'])->name('admin.users.assignRoles');
-    Route::post('admin/users/{user}/remove-roles', [App\Http\Controllers\Admin\UserController::class, 'removeRoles'])->name('admin.users.removeRoles');
-    Route::post('admin/users/{user}/block', [App\Http\Controllers\Admin\UserController::class, 'blockUser'])->name('admin.users.block');
-    Route::post('admin/users/{user}/unblock', [App\Http\Controllers\Admin\UserController::class, 'unblockUser'])->name('admin.users.unblock');
+// Routes for super-admin role
+Route::middleware(['auth', 'role:super-admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::post('{user}/assign-roles', [UserController::class, 'assignRoles'])->name('assignRoles');
+        Route::post('{user}/remove-roles', [UserController::class, 'removeRoles'])->name('removeRoles');
+        Route::post('{user}/block', [UserController::class, 'blockUser'])->name('block');
+        Route::post('{user}/unblock', [UserController::class, 'unblockUser'])->name('unblock');
+    });
 });

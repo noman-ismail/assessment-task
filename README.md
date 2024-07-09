@@ -1,4 +1,4 @@
-# RLMS - Assessment Task
+#  Laravel Interview Assignment
 
 
 
@@ -63,3 +63,6 @@
 14. Start the localhost server:
     
         php artisan serve
+15. Default Seeder For SuperAdmin
+        email : superadmin@example.com
+        password : password 

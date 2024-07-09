@@ -9,11 +9,11 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     public function index()
-    {
-        $users = User::with('roles')->get();
-        $roles = Role::all();
-        return view('admin.user.index', compact('users', 'roles'));
-    }
+{
+    $users = User::with('roles')->paginate(10);
+    $roles = Role::all();
+    return view('admin.user.index', compact('users', 'roles'));
+}
 
     public function assignRoles(Request $request, User $user)
     {

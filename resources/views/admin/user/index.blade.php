@@ -12,65 +12,61 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">{{ __('Login') }}</div>
+                    <div class="card-header">Admin Panel</div>
 
-                    <div class="card-body">
-                        <h1>Admin Panel</h1>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Roles</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($users as $user)
+                    <div class="card-body px-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
                                     <tr>
-                                        <td>{{ $user->id }}</td>
-                                        <td>{{ $user->name }}</td>
-                                        <td>{{ $user->email }}</td>
-                                        <td>
-                                            <form id="assign-roles-{{ $user->id }}" method="POST"
-                                                class="d-flex flex-column align-items-start mb-3">
-                                                @csrf
-                                                <div class="form-group w-100 mb-2">
-                                                    <label for="roles-{{ $user->id }}" class="form-label">Assign
-                                                        Roles</label>
-                                                    <select name="roles[]" id="roles-{{ $user->id }}" multiple
-                                                        class="form-control">
-                                                        @foreach ($roles as $role)
-                                                            <option value="{{ $role->name }}"
-                                                                {{ $user->hasRole($role->name) ? 'selected' : '' }}>
-                                                                {{ $role->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <button type="button" class="btn btn-info btn-sm align-self-end"
-                                                    onclick="assignRoles({{ $user->id }})">
-                                                    Assign Roles
-                                                </button>
-                                            </form>
-
-                                        </td>
-                                        <td>
-                                            <form id="block-unblock-{{ $user->id }}" method="POST">
-                                                @csrf
-                                                <button type="button"
-                                                    class="btn {{ $user->is_blocked ? 'btn-success' : 'btn-danger' }}"
-                                                    onclick="toggleBlock({{ $user->id }})">
-                                                    <i class="bi {{ $user->is_blocked ? 'bi-unlock' : 'bi-lock' }}"></i>
-                                                </button>
-                                            </form>
-
-                                        </td>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th class="text-nowrap">Email</th>
+                                        <th>Roles</th>
+                                        <th>Actions</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($users as $user)
+                                        <tr>
+                                            <td>{{ $user->id }}</td>
+                                            <td>{{ $user->name }}</td>
+                                            <td>{{ $user->email }}</td>
+                                            <td>
+                                                <form id="assign-roles-{{ $user->id }}" method="POST" class="d-flex flex-column align-items-start mb-3" style="max-width: 300px;">
+                                                    @csrf
+                                                    <div class="form-group w-100 mb-2">
+                                                        <label for="roles-{{ $user->id }}" class="form-label w-100">Assign Roles</label>
+                                                        <select name="roles[]" id="roles-{{ $user->id }}" multiple class="form-control">
+                                                            @foreach ($roles as $role)
+                                                                <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                                                                    {{ $role->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <button type="button" class="btn btn-info btn-sm mt-0" onclick="assignRoles({{ $user->id }})">
+                                                        Assign Roles
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form id="block-unblock-{{ $user->id }}" method="POST">
+                                                    @csrf
+                                                    <button type="button" class="btn {{ $user->is_blocked ? 'btn-success' : 'btn-danger' }}" onclick="toggleBlock({{ $user->id }})">
+                                                        <i class="bi {{ $user->is_blocked ? 'bi-unlock' : 'bi-lock' }}"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        {{-- <div class="d-flex justify-content-center">
+                            {{ $users->links() }} <!-- Pagination links -->
+                        </div> --}}
+
                     </div>
                 </div>
             </div>

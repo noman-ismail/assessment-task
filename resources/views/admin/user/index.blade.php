@@ -1,13 +1,14 @@
 @extends('layouts.app')
 @section('content')
-<style>
-    .form-group select {
-        max-width: 100%;
-    }
-    .btn {
-        margin-top: 10px;
-    }
-</style>
+    <style>
+        .form-group select {
+            max-width: 100%;
+        }
+
+        .btn {
+            margin-top: 10px;
+        }
+    </style>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12">
@@ -33,19 +34,25 @@
                                             <td>{{ $user->name }}</td>
                                             <td>{{ $user->email }}</td>
                                             <td>
-                                                <form id="assign-roles-{{ $user->id }}" method="POST" class="d-flex flex-column align-items-start mb-3" style="max-width: 300px;">
+                                                <form id="assign-roles-{{ $user->id }}" method="POST"
+                                                    class="d-flex flex-column align-items-start mb-3"
+                                                    style="max-width: 300px;">
                                                     @csrf
                                                     <div class="form-group w-100 mb-2">
-                                                        <label for="roles-{{ $user->id }}" class="form-label w-100">Assign Roles</label>
-                                                        <select name="roles[]" id="roles-{{ $user->id }}" multiple class="form-control">
+                                                        <label for="roles-{{ $user->id }}"
+                                                            class="form-label w-100">Assign Roles</label>
+                                                        <select name="roles[]" id="roles-{{ $user->id }}" multiple
+                                                            class="form-control">
                                                             @foreach ($roles as $role)
-                                                                <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                                                                <option value="{{ $role->name }}"
+                                                                    {{ $user->hasRole($role->name) ? 'selected' : '' }}>
                                                                     {{ $role->name }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <button type="button" class="btn btn-info btn-sm mt-0" onclick="assignRoles({{ $user->id }})">
+                                                    <button type="button" class="btn btn-info btn-sm mt-0"
+                                                        onclick="assignRoles({{ $user->id }})">
                                                         Assign Roles
                                                     </button>
                                                 </form>
@@ -53,8 +60,11 @@
                                             <td>
                                                 <form id="block-unblock-{{ $user->id }}" method="POST">
                                                     @csrf
-                                                    <button type="button" class="btn {{ $user->is_blocked ? 'btn-success' : 'btn-danger' }}" onclick="toggleBlock({{ $user->id }})">
-                                                        <i class="bi {{ $user->is_blocked ? 'bi-unlock' : 'bi-lock' }}"></i>
+                                                    <button type="button"
+                                                        class="btn {{ $user->is_blocked ? 'btn-success' : 'btn-danger' }}"
+                                                        onclick="toggleBlock({{ $user->id }})">
+                                                        <i
+                                                            class="bi {{ $user->is_blocked ? 'bi-unlock' : 'bi-lock' }}"></i>
                                                     </button>
                                                 </form>
                                             </td>
@@ -78,7 +88,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 
 
     <script>
@@ -98,9 +108,18 @@
                 success: function(response) {
                     alert(response.success);
                 },
-                error: function(response) {
-                    alert('Error assigning roles.');
+                error: function(xhr) {
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        if (xhr.responseJSON.message === "User does not have the right roles.") {
+                            alert('You do not have permission to perform this action.');
+                        } else {
+                            alert('Error: ' + xhr.responseJSON.message);
+                        }
+                    } else {
+                        alert('Error assigning roles.');
+                    }
                 }
+
             });
         }
 
@@ -126,8 +145,16 @@
                         button.html('<i class="bi bi-lock"></i>');
                     }
                 },
-                error: function(response) {
-                    alert('Error changing user block status.');
+                error: function(xhr) {
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        if (xhr.responseJSON.message === "User does not have the right roles.") {
+                            alert('You do not have permission to perform this action.');
+                        } else {
+                            alert('Error: ' + xhr.responseJSON.message);
+                        }
+                    } else {
+                        alert('Error changing user block status.');
+                    }
                 }
             });
         }

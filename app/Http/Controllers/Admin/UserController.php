@@ -9,16 +9,20 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     public function index()
-{
-    $users = User::with('roles')->paginate(10);
-    $roles = Role::all();
-    return view('admin.user.index', compact('users', 'roles'));
-}
+    {
+        $users = User::with('roles')->paginate(10);
+        $roles = Role::all();
+        return view('admin.user.index', compact('users', 'roles'));
+    }
 
     public function assignRoles(Request $request, User $user)
     {
+    try{
         $user->syncRoles($request->roles);
         return response()->json(['success' => 'Roles assigned successfully.']);
+    } catch (\Exception $e) {
+        return response()->json(['message' => $e->getMessage()], 403);
+    }
     }
 
     public function removeRoles(Request $request, User $user)
@@ -29,16 +33,25 @@ class UserController extends Controller
 
     public function blockUser(User $user)
     {
-        $user->is_blocked = true;
-        $user->save();
-        return response()->json(['success' => 'User blocked successfully.']);
+        try {
+            $user->is_blocked = true;
+            $user->save();
+            return response()->json(['success' => 'User blocked successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
+        }
     }
+
 
     public function unblockUser(User $user)
     {
-        $user->is_blocked = false;
-        $user->save();
-        return response()->json(['success' => 'User unblocked successfully.']);
+        try {
+            $user->is_blocked = false;
+            $user->save();
+            return response()->json(['success' => 'User unblocked successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
+        }
     }
 
 }

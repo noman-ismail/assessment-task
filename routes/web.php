@@ -31,23 +31,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // Super-admin routes
-    Route::middleware('checkRole:super-admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', [UserController::class, 'index'])->name('index');
+    Route::middleware(['role:admin|super-admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::middleware('role:admin|super-admin')->group(function () {
+            Route::get('users', [UserController::class, 'index'])->name('users.index');
+        });
+
+        Route::middleware('role:super-admin')->prefix('users')->name('users.')->group(function () {
             Route::post('{user}/assign-roles', [UserController::class, 'assignRoles'])->name('assignRoles');
             Route::post('{user}/remove-roles', [UserController::class, 'removeRoles'])->name('removeRoles');
             Route::post('{user}/block', [UserController::class, 'blockUser'])->name('block');
             Route::post('{user}/unblock', [UserController::class, 'unblockUser'])->name('unblock');
         });
-    });
-
-    // Admin routes
-    Route::middleware('checkRole:admin')->prefix('admin')->name('admin.')->group(function () {
-        // Add admin-specific routes here
-    });
-
-    // User routes
-    Route::middleware('checkRole:user')->prefix('user')->name('user.')->group(function () {
-        // Add user-specific routes here
     });
 });
